@@ -7,12 +7,14 @@ public class Deque<Item> implements Iterable<Item> {
 	private int size;
 
 	public Deque() {
+		head = new Node(null);
+		tail = new Node(null);
 		head.Next = tail;
 		tail.Previous = head;
 	}
 
 	public boolean isEmpty() {
-		return head.Next == tail;
+		return size == 0;
 	}
 
 	public int size() {
@@ -22,8 +24,7 @@ public class Deque<Item> implements Iterable<Item> {
 	public void addFirst(Item item) {
 		if (item == null)
 			throw new NullPointerException("client attempts to add a null item");
-		Node<Item> node = new Node<Item>();
-		node.Value = item;
+		Node<Item> node = new Node(item);
 		node.Next = head.Next;
 		head.Next.Previous = node;
 		head.Next = node;
@@ -34,8 +35,7 @@ public class Deque<Item> implements Iterable<Item> {
 	public void addLast(Item item) {
 		if (item == null)
 			throw new NullPointerException("client attempts to add a null item");
-		Node<Item> node = new Node<Item>();
-		node.Value = item;
+		Node<Item> node = new Node(item);
 		tail.Previous.Next = node;
 		node.Next = tail;
 		node.Previous = tail.Previous;
@@ -70,7 +70,7 @@ public class Deque<Item> implements Iterable<Item> {
 	}
 
 	public Iterator<Item> iterator() {
-		return new DequeIterator<Item>();
+		return new DequeIterator();
 	}
 
 	private class DequeIterator<Item> implements Iterator<Item> {
@@ -85,10 +85,12 @@ public class Deque<Item> implements Iterable<Item> {
 					"client calls the remove() method in the iterator");
 		}
 
-		public Item next() {
-			if (hasNext())
-				return current.Next.Value;
-			else
+		public Item next() {			
+			if (hasNext()) {
+				Item item = current.Next.Value;
+				current = current.Next;
+				return item;
+			} else
 				throw new NoSuchElementException(
 						"there are no more items to return in the iterator");
 		}
@@ -99,6 +101,21 @@ public class Deque<Item> implements Iterable<Item> {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+
+		Deque<Integer> deque = new Deque<Integer>();
+		deque.addFirst(5);
+		deque.addFirst(6);
+		StdOut.println(deque.size());
+		deque.removeLast();
+		StdOut.println(deque.size());
+		deque.removeLast();
+	
+		//Iterator<Integer> iterator = deque.iterator();
+		//iterator.remove();		
+
+		for (Integer i : deque) {
+			StdOut.println(i);
+		}
 
 	}
 
