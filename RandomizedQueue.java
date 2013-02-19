@@ -2,9 +2,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-	int size = 4, count;
-	Item[] array;
-	int first, last;
+	private int size = 4, count;
+	private Item[] array;
+	private int first, last;
 
 	public RandomizedQueue() {
 		array = (Item[]) new Object[size];
@@ -26,7 +26,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		return i % size;
 	}
 
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return count == 0;
 	}
 
