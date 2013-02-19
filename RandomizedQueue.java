@@ -2,7 +2,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
-
 	int size = 4, count;
 	Item[] array;
 	int first, last;
@@ -19,6 +18,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 		size = capacity;
 		array = newArray;
+		first = 0;
+		last = first + count;
 	}
 
 	private int getArrayIndex(int i, int size) {
@@ -39,6 +40,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 					"the client attempts to add a null item");
 		array[last] = item;
 		last++;
+		last = getArrayIndex(last, size);
 		count++;
 
 		if (count == size) {
@@ -55,12 +57,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		int pos = getArrayIndex(first + index, size);
 		Item item = (Item) array[pos];
 		array[pos] = array[first];
+		array[first] = null;
 		first++;
 		first = first % size;
 
 		count--;
 
-		if (count >= 4 && count == size / 4) {
+		if (count >= 4 && count < size / 4) {
 			resize(array, size / 4);
 		}
 
@@ -86,29 +89,25 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	}
 
 	private class RandomizedQueueIterator<Item> implements Iterator<Item> {
-		private int current = 0;
+		private int current = first;
 		private Item[] randomizedArray;
 
 		public RandomizedQueueIterator() {
+			// StdOut.println("iterator constructor");
 			randomizedArray = (Item[]) array.clone();
 			for (int i = 0; i < count; i++) {
 				int random = StdRandom.uniform(i + 1);
-				StdOut.println("Exchange " + randomizedArray[i] + "  with random index " + randomizedArray[random]);
-				//int pos = getArrayIndex(first + i, size);
-				//int posRandom = getArrayIndex(first + pos, size);
-				Item item = randomizedArray[i];
-				randomizedArray[i] = randomizedArray[random];
-				randomizedArray[random] = item;
-			}
-
-			for (int i = 0; i < size; i++) {
-				StdOut.println(randomizedArray[i]);
+				int pos = getArrayIndex(first + i, size);
+				int posRandom = getArrayIndex(first + random, size);
+				
+				Item item = randomizedArray[pos];
+				randomizedArray[pos] = randomizedArray[posRandom];
+				randomizedArray[posRandom] = item;
 			}
 		}
 
 		public boolean hasNext() {
-			return (current >= first && (current > first || current < last))
-					|| (current >= first && current < last);
+			return (first > last && (current >= first || current < last) || (first < last && current < last));
 		}
 
 		public void remove() {
@@ -133,16 +132,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	 */
 	public static void main(String[] args) {
 		RandomizedQueue<Integer> queue = new RandomizedQueue<Integer>();
-		for (int i = 1; i <= 10; i++)
+
+		for (int i = 1; i <= 20; i++) {
 			queue.enqueue(i);
+		}
 
-		StdOut.println(queue.size());
-
-		//for (int i = 1; i < 10; i++)
-			//StdOut.println(queue.sample());
-
-		 for(Integer i: queue) {
-		 StdOut.println(i);
-		 }
+		for (int i = 1; i <= 19; i++) {
+			int item = queue.dequeue();
+			queue.enqueue(item + 1);
+		}
 	}
 }
