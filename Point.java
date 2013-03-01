@@ -54,9 +54,9 @@ public class Point implements Comparable<Point> {
 		if (y == that.y)
 			return (y - y)/y;
 		if (x == that.x && y < that.y)
-			return Double.MAX_VALUE;
+			return Double.POSITIVE_INFINITY;
 		if (x == that.x && y >= that.y)
-			return Double.MIN_VALUE;
+			return Double.NEGATIVE_INFINITY;
 		
 		return ((double)(y - that.y) / (double)(x - that.x));
 	}
